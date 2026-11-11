@@ -25,7 +25,10 @@ async function processOne(db: Db, log: ClaimedLog, siteUrl: string, fromAddress:
       .select("name, sender_name, reply_to_email, timezone, send_window_start, send_window_end, send_days, ai_requires_validation")
       .eq("id", log.organization_id).single(),
   ]);
-  const prospect = quote?.prospects;
+  const rel = quote?.prospects as unknown;
+  const prospect = (Array.isArray(rel) ? rel[0] : rel) as
+    | { id: string; full_name: string; email: string | null; email_opt_out: boolean }
+    | undefined;
   if (!quote || !campaign || !org || !prospect) {
     await db.from("follow_up_logs").update({ status: "cancelled", error: "données introuvables", locked_at: null }).eq("id", log.id);
     return "cancelled";
@@ -71,7 +74,7 @@ async function processOne(db: Db, log: ClaimedLog, siteUrl: string, fromAddress:
   });
   const result = await sendEmail({
     from: `${company.replace(/[<>"]/g, "")} <${fromAddress}>`,
-    to: prospect.email, subject: mail.subject, html: mail.html, text: mail.text,
+    to: prospect.email as string, subject: mail.subject, html: mail.html, text: mail.text,
     replyTo: org.reply_to_email, unsubscribeOneClickUrl: links.oneClick, idempotencyKey: log.id,
   });
 
