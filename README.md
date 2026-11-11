@@ -5,7 +5,7 @@ SaaS de relance automatique de devis pour artisans du bâtiment. Voir `ARCHITECT
 ## État
 
 - Fait et testé : moteur de relance (`npm test`, 12 tests).
-- Écrit mais NON exécuté : migrations SQL (`supabase/migrations`).
+- Migrations SQL appliquées au projet Supabase `relancedevis` (région Paris, offre gratuite) et testées : isolation entre entreprises (RLS), anti-doublon, arrêt des relances après réponse ou désinscription.
 - À construire : interface Next.js, authentification, Stripe, emails, déploiement.
 
 ## Démarrer dans GitHub Codespaces (depuis une tablette)
