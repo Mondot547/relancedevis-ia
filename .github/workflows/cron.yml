@@ -1,0 +1,18 @@
+name: Relances automatiques
+# Appelle le moteur de relance toutes les 5 minutes. Rien ne part tant que les secrets
+# APP_URL et CRON_SECRET (Settings > Secrets and variables > Actions) ne sont pas définis.
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Déclencher le moteur
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$APP_URL" ] || [ -z "$CRON_SECRET" ]; then echo "Secrets non configurés : rien à faire."; exit 0; fi
+          curl --fail-with-body -sS -X POST "$APP_URL/api/cron/relances" -H "Authorization: Bearer $CRON_SECRET"
