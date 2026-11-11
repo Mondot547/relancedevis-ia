@@ -5,9 +5,15 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      # Valeurs factices : le build ne contacte pas Supabase. Les vraies clés restent hors du dépôt.
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - run: npm install
       - run: npm test
+      - run: npm run build
